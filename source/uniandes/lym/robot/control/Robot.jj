@@ -51,8 +51,8 @@ PARSER_END(Robot)
 SKIP:
 {
 	" "
-	| "\r"
-	| "\t"
+	|	"\r"
+	|	"\t"
 	| "\n"
 }
 
