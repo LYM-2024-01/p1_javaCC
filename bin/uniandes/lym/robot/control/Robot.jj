@@ -38,7 +38,22 @@ public class Robot
 
 
 	private RobotWorldDec world;
-	
+
+
+	private static int dim = 0;
+	private static int myXPos = 0;
+	private static int myYPos = 0;
+	private static int myChips = 0;
+	private static int myBallons = 0;
+	private int myChipsHere = 0;
+	private int myBallonsHere = 0;
+	private int spaces = 0;
+
+
+	HashMap < String, Integer > procedimientos = new HashMap < String, Integer > ();
+  	HashMap < String, String > variables = new HashMap < String, String > ();
+  	HashMap < String, Integer > variables_temporales = new HashMap < String, Integer > ();
+  	HashSet < String> condiciones = new HashSet < String> ();
 	
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
@@ -69,6 +84,37 @@ TOKEN: /* Nombres de Comandos */
 
 }
 
+
+TOKEN: //COSAS
+{
+	< COLON : ":" >
+}
+
+
+TOKEN:  //SUBESTRUCTURAS
+{
+  < IF : "if" >
+| < LOOP : "loop" >
+| < REPEAT: "repead" >
+| < DEFUN : "defun" >  
+
+}
+
+
+TOKEN: //CONSTANTES
+{
+ 	< DIM :"dim" >
+		| < MYXPOS : "myxpos" >
+		| < MYYPOS: "myypos" >
+		| < MYCHIPS :"mychips" >
+		| < MYBALLONS : "myballoons" >
+		| < BALLONSHERE : "balloonshere" >
+		| < CHIPSHERE : "chipsHere" >
+		| < SPACES : "spaces" >
+		| < NULL : "null" >
+}
+
+
 TOKEN:
 {
 		<BALLOONS:  "BALLOONS" >
@@ -76,12 +122,39 @@ TOKEN:
 
 }
 
+TOKEN: //O
+{
+ 	< NORTH : "north" >
+		| < SOUTH : "south" >
+		| < EAST: "east" >
+		| < WEST : "west" >
+}
 
+TOKEN: //D
+{
+ 	< LEFT : "left" >
+		//| < RIGHT : "right" >
+		| < AROUND: "around" >
+		| < FRONT : "front" >
+		| < BACK : "back" >
+		| < UP: "up" >
+		| < DOWN : "down" >
+}
 
 TOKEN :
 {
 		<NUM: (<DIGIT>)+ >
 		|  	<#DIGIT: ["0"-"9"] >
+		
+        
+}
+
+TOKEN :
+{
+  	<#DIGITO: ["0"-"9"] >
+	| < #LETRA : [ "a" - "z" , "A" - "Z"] >
+
+	| < PALABRA : (< LETRA > | "_") (< LETRA >| < DIGITO > | "_")* >
         
 }
 
@@ -169,4 +242,22 @@ TOKEN :
 		}
 	}
 
+
+
+	int constante (): {
+		int respuesta = "";
+	}
+	{
+	  (	    	( < DIM > { respuesta = this.dim; } )
+		| 	( < MYXPOS > { respuesta = this.myXPos; } )
+		| 	( < MYYPOS > { respuesta = this.myYPos; } )
+		| 	( < MYCHIPS  > { respuesta = this.myChips; } )
+		| 	( < MYBALLONS > { respuesta = this.myBallons; } )
+		| 	( < BALLONSHERE > { respuesta = this.myBallons; } )
+		| 	( < CHIPSHERE >{ respuesta = this.myChipsHere; } )
+		|   ( < SPACES > { respuesta = this.spaces; } )
+		|   ( < NULL > { respuesta = null  ; } )
+		)
+| 		{ return respuesta;}
+	}
 	

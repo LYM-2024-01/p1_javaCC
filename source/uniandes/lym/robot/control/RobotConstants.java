@@ -25,13 +25,67 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int HOP = 11;
   /** RegularExpression Id. */
-  int BALLOONS = 12;
+  int COLON = 12;
   /** RegularExpression Id. */
-  int CHIPS = 13;
+  int IF = 13;
   /** RegularExpression Id. */
-  int NUM = 14;
+  int LOOP = 14;
   /** RegularExpression Id. */
-  int DIGIT = 15;
+  int REPEAT = 15;
+  /** RegularExpression Id. */
+  int DEFUN = 16;
+  /** RegularExpression Id. */
+  int DIM = 17;
+  /** RegularExpression Id. */
+  int MYXPOS = 18;
+  /** RegularExpression Id. */
+  int MYYPOS = 19;
+  /** RegularExpression Id. */
+  int MYCHIPS = 20;
+  /** RegularExpression Id. */
+  int MYBALLONS = 21;
+  /** RegularExpression Id. */
+  int BALLONSHERE = 22;
+  /** RegularExpression Id. */
+  int CHIPSHERE = 23;
+  /** RegularExpression Id. */
+  int SPACES = 24;
+  /** RegularExpression Id. */
+  int NULL = 25;
+  /** RegularExpression Id. */
+  int BALLOONS = 26;
+  /** RegularExpression Id. */
+  int CHIPS = 27;
+  /** RegularExpression Id. */
+  int NORTH = 28;
+  /** RegularExpression Id. */
+  int SOUTH = 29;
+  /** RegularExpression Id. */
+  int EAST = 30;
+  /** RegularExpression Id. */
+  int WEST = 31;
+  /** RegularExpression Id. */
+  int LEFT = 32;
+  /** RegularExpression Id. */
+  int AROUND = 33;
+  /** RegularExpression Id. */
+  int FRONT = 34;
+  /** RegularExpression Id. */
+  int BACK = 35;
+  /** RegularExpression Id. */
+  int UP = 36;
+  /** RegularExpression Id. */
+  int DOWN = 37;
+  /** RegularExpression Id. */
+  int NUM = 38;
+  /** RegularExpression Id. */
+  int DIGIT = 39;
+  /** RegularExpression Id. */
+  int DIGITO = 40;
+  /** RegularExpression Id. */
+  int LETRA = 41;
+  /** RegularExpression Id. */
+  int PALABRA = 42;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -50,10 +104,37 @@ public interface RobotConstants {
     "\"Pop\"",
     "\"GO\"",
     "\"HOP\"",
+    "\":\"",
+    "\"if\"",
+    "\"loop\"",
+    "\"repead\"",
+    "\"defun\"",
+    "\"dim\"",
+    "\"myxpos\"",
+    "\"myypos\"",
+    "\"mychips\"",
+    "\"myballoons\"",
+    "\"balloonshere\"",
+    "\"chipsHere\"",
+    "\"spaces\"",
+    "\"null\"",
     "\"BALLOONS\"",
     "\"CHIPS\"",
+    "\"north\"",
+    "\"south\"",
+    "\"east\"",
+    "\"west\"",
+    "\"left\"",
+    "\"around\"",
+    "\"front\"",
+    "\"back\"",
+    "\"up\"",
+    "\"down\"",
     "<NUM>",
     "<DIGIT>",
+    "<DIGITO>",
+    "<LETRA>",
+    "<PALABRA>",
     "\"(\"",
     "\")\"",
     "\",\"",
