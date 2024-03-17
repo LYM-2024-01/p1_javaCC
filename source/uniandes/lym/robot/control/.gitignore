@@ -1,3 +1,7 @@
 /Robot.java
 /RobotConstants.java
 /RobotTokenManager.java
+/TokenMgrError.java
+/ParseException.java
+/SimpleCharStream.java
+/Token.java

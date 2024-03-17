@@ -271,3 +271,73 @@ TOKEN :
 	}
 	
 
+void direccionn(): {}
+{
+  < COLON >
+  (< LEFT > | < FRONT > | < BACK >| < RIGHT >) 
+}
+
+void orientacion(): {}
+{
+  < COLON >
+  (< NORTH > | < SOUTH > | < WEST >| < EAST >) 
+}
+
+void objeto(): {}
+{
+  < COLON >
+  (< BALLOONS > | < CHIPS >) 
+}
+
+String valor_variable(): { String name = ""; }
+{
+  < COLON >
+  < PALABRA > { name = token.image; return name;}
+}
+
+void comandos(): { }
+{
+  (    < LP >
+  (    < MOV > (< NUM > | valor_variable() | constante())
+  | < SKIPP > (< NUM > | valor_variable() | constante())
+  | < FACE > orientacion()
+  | < PUT > objeto() (< NUM > | valor_variable() | constante())
+  | < PICK > objeto() (< NUM > | valor_variable() | constante())
+  | < MOVEDIR > (< NUM > | valor_variable() | constante()) direccionn()
+  | < RUNDIRS > (direccionn())+
+  | < MOVEFACE > (< NUM > | valor_variable() | constante()) orientacion()
+  | < NULL >
+  
+  )
+  < RP > )+
+}
+
+void subcondicion(): { }
+{
+  < LP >
+  (
+    < FACING > orientacion()
+  | < BLOCKED >
+  | < CANPUT > objeto()(< NUM > | valor_variable() | constante())
+  | < CANPICK > objeto()(< NUM > | valor_variable() | constante())
+  | < CANMOVE > orientacion()
+  | < ISZERO > (< NUM > | valor_variable() | constante())
+  | < NOT > subcondicion()
+  
+  )
+  < RP >
+}
+
+void subestructuras(): { }
+{
+  < LP >
+  (
+    < IF > subcondicion() comandos() comandos()
+  | < LOOP > subcondicion() comandos()
+  | < REPEAT > (< NUM > | valor_variable() | constante()) comandos()
+  
+  )
+  < RP >
+}
+
+
