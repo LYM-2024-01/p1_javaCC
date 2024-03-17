@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @SuppressWarnings("serial")
 public class Robot implements RobotConstants {
@@ -26,6 +28,11 @@ public class Robot implements RobotConstants {
         private int myBallonsHere = 0;
         private int spaces = 0;
 
+
+        private HashMap < String, Integer > funciones = new HashMap < String, Integer > ();
+        private HashMap < String, String > variables = new HashMap < String, String > ();
+        private HashMap < String, Integer > variables_temporales = new HashMap < String, Integer > ();
+        private HashSet < String> condiciones = new HashSet < String> ();
 
         void setWorld(RobotWorld w) {
                 world = (RobotWorldDec) w;
@@ -49,56 +56,56 @@ public class Robot implements RobotConstants {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case RIGHT:{
           jj_consume_token(RIGHT);
-          jj_consume_token(43);
-          jj_consume_token(44);
+          jj_consume_token(LP);
+          jj_consume_token(RP);
 world.turnRight();salida = "Command: Turnright";
           break;
           }
         case MOV:{
           jj_consume_token(MOV);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           x = num();
-          jj_consume_token(44);
+          jj_consume_token(RP);
 world.moveForward(x,false);salida = "Command: Moveforward ";
           break;
           }
         case HOP:{
           jj_consume_token(HOP);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           x = num();
-          jj_consume_token(44);
+          jj_consume_token(RP);
 world.moveForward(x,true);salida = "Command:Jumpforward ";
           break;
           }
         case GO:{
           jj_consume_token(GO);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           x = num();
-          jj_consume_token(45);
+          jj_consume_token(59);
           y = num();
-          jj_consume_token(44);
+          jj_consume_token(RP);
 world.setPostion(x,y);salida = "Command:GO ";
           break;
           }
         case PUT:{
           jj_consume_token(PUT);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           put();
-          jj_consume_token(44);
+          jj_consume_token(RP);
           break;
           }
         case PICK:{
           jj_consume_token(PICK);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           get();
-          jj_consume_token(44);
+          jj_consume_token(RP);
           break;
           }
         case POP:{
           jj_consume_token(POP);
-          jj_consume_token(43);
+          jj_consume_token(LP);
           x = num();
-          jj_consume_token(44);
+          jj_consume_token(RP);
 world.popBalloons(x); salida = "Comando:  Pop";
           break;
           }
@@ -107,7 +114,7 @@ world.popBalloons(x); salida = "Comando:  Pop";
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(46);
+        jj_consume_token(60);
 try {
                                  Thread.sleep(900);
                     } catch (InterruptedException e) {
@@ -151,14 +158,14 @@ try {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case CHIPS:{
       jj_consume_token(CHIPS);
-      jj_consume_token(45);
+      jj_consume_token(59);
       f = num();
 world.putChips(f); salida = "Command:  Put Chips";
       break;
       }
     case BALLOONS:{
       jj_consume_token(BALLOONS);
-      jj_consume_token(45);
+      jj_consume_token(59);
       f = num();
 world.putBalloons(f); salida = "Command:  Put Balloons";
       break;
@@ -174,14 +181,14 @@ world.putBalloons(f); salida = "Command:  Put Balloons";
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case CHIPS:{
       jj_consume_token(CHIPS);
-      jj_consume_token(45);
+      jj_consume_token(59);
       f = num();
 world.pickChips(f);salida = "Command:  Pick chips";
       break;
       }
     case BALLOONS:{
       jj_consume_token(BALLOONS);
-      jj_consume_token(45);
+      jj_consume_token(59);
       f = num();
 world.grabBalloons(f);salida="Command:  Pick balloons";
       break;
@@ -213,7 +220,7 @@ try
     throw new Error("Missing return statement in function");
 }
 
-  final public int constante() throws ParseException {String respuesta = "";
+  final public int constante() throws ParseException {int respuesta = -1;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DIM:
     case MYXPOS:
@@ -222,8 +229,7 @@ try
     case MYBALLONS:
     case BALLONSHERE:
     case CHIPSHERE:
-    case SPACES:
-    case NULL:{
+    case SPACES:{
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case DIM:{
         jj_consume_token(DIM);
@@ -265,11 +271,6 @@ respuesta = this.myChipsHere;
 respuesta = this.spaces;
         break;
         }
-      case NULL:{
-        jj_consume_token(NULL);
-respuesta = null  ;
-        break;
-        }
       default:
         jj_la1[5] = jj_gen;
         jj_consume_token(-1);
@@ -301,10 +302,10 @@ respuesta = null  ;
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0xfe0,0xfe0,0xfe1,0xc000000,0xc000000,0x3fe0000,0x3fe0000,};
+	   jj_la1_0 = new int[] {0xfe0,0xfe0,0xfe1,0x0,0x0,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_1 = new int[] {0x0,0x0,0x0,0x3,0x3,0x1fe00,0x1fe00,};
 	}
 
   /** Constructor with InputStream. */
@@ -429,7 +430,7 @@ respuesta = null  ;
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[47];
+	 boolean[] la1tokens = new boolean[61];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -446,7 +447,7 @@ respuesta = null  ;
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 47; i++) {
+	 for (int i = 0; i < 61; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

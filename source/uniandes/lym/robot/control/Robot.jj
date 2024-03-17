@@ -31,6 +31,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 @SuppressWarnings("serial")
 public class Robot 
@@ -50,10 +52,10 @@ public class Robot
 	private int spaces = 0;
 
 
-	HashMap < String, Integer > procedimientos = new HashMap < String, Integer > ();
-  	HashMap < String, String > variables = new HashMap < String, String > ();
-  	HashMap < String, Integer > variables_temporales = new HashMap < String, Integer > ();
-  	HashSet < String> condiciones = new HashSet < String> ();
+	private HashMap < String, Integer > funciones = new HashMap < String, Integer > ();
+  	private HashMap < String, String > variables = new HashMap < String, String > ();
+  	private HashMap < String, Integer > variables_temporales = new HashMap < String, Integer > ();
+  	private HashSet < String> condiciones = new HashSet < String> ();
 	
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
@@ -73,33 +75,62 @@ SKIP:
 
 TOKEN: /* Nombres de Comandos */
 {
-
-			<MOV:  "Mov">
+			<MOV : "mov" | "move" >
 		| 	<RIGHT: "RIGHT">
 		| 	<PUT: "Put">
 		| 	<PICK: "Pick">
 		|  < POP: "Pop" >
 		|  <GO: "GO" >
-        |  < HOP:  "HOP" >		
+        |  < HOP:  "HOP" >
 
+        | < LEFT : "left" >
+		| < AROUND: "around" >
+		| < FRONT : "front" >
+		| < BACK : "back" >
+		| < UP: "up" >
+		| < DOWN : "down" >
+
+		| < DEFVAR : "defvar" >
+		| < SKIPP : "skip" >
+		| < TURN: "turn" >
+		| < FACE :"face" >
+		| < MOVEDIR : "move-dir" >
+		| < RUNDIRS : "run-dirs" >
+		| < MOVEFACE : "move-face" >
 }
-
 
 TOKEN: //COSAS
 {
-	< COLON : ":" >
+  	< LP : "(" >
+	| < RP : ")" >
+	| < COLON : ":" >
 }
-
 
 TOKEN:  //SUBESTRUCTURAS
 {
-  < IF : "if" >
-| < LOOP : "loop" >
-| < REPEAT: "repead" >
-| < DEFUN : "defun" >  
+	  < IF : "if" >
+	| < LOOP : "loop" > 
+	| < REPEAT: "repeat" >
+	| < DEFUN : "defun" >  
+}
+
+TOKEN:
+{
+		<BALLOONS:  "BALLOONS" >
+		|	<CHIPS:     "CHIPS"  >	
 
 }
 
+TOKEN:  //SUBCONDICIONES
+{
+	  < FACING : "facing?" >
+	| < BLOCKED : "blocked?" >
+	| < CANPUT : "can-put?" >
+	| < CANPICK : "can-pick?" >
+	| < CANMOVE : "can-move?" >
+	| < ISZERO : "iszero?" >
+	| < NOT : "not" >  
+}
 
 TOKEN: //CONSTANTES
 {
@@ -111,15 +142,8 @@ TOKEN: //CONSTANTES
 		| < BALLONSHERE : "balloonshere" >
 		| < CHIPSHERE : "chipsHere" >
 		| < SPACES : "spaces" >
+		
 		| < NULL : "null" >
-}
-
-
-TOKEN:
-{
-		<BALLOONS:  "BALLOONS" >
-		|	<CHIPS:     "CHIPS"  >	
-
 }
 
 TOKEN: //O
@@ -130,23 +154,10 @@ TOKEN: //O
 		| < WEST : "west" >
 }
 
-TOKEN: //D
-{
- 	< LEFT : "left" >
-		//| < RIGHT : "right" >
-		| < AROUND: "around" >
-		| < FRONT : "front" >
-		| < BACK : "back" >
-		| < UP: "up" >
-		| < DOWN : "down" >
-}
-
 TOKEN :
 {
 		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
-		
-        
+		|  	<#DIGIT: ["0"-"9"] >     
 }
 
 TOKEN :
@@ -155,7 +166,6 @@ TOKEN :
 	| < #LETRA : [ "a" - "z" , "A" - "Z"] >
 
 	| < PALABRA : (< LETRA > | "_") (< LETRA >| < DIGITO > | "_")* >
-        
 }
 
 
@@ -245,7 +255,7 @@ TOKEN :
 
 
 	int constante (): {
-		int respuesta = "";
+		int respuesta = -1;
 	}
 	{
 	  (	    	( < DIM > { respuesta = this.dim; } )
@@ -256,8 +266,8 @@ TOKEN :
 		| 	( < BALLONSHERE > { respuesta = this.myBallons; } )
 		| 	( < CHIPSHERE >{ respuesta = this.myChipsHere; } )
 		|   ( < SPACES > { respuesta = this.spaces; } )
-		|   ( < NULL > { respuesta = null  ; } )
 		)
 | 		{ return respuesta;}
 	}
 	
+

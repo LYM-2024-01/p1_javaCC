@@ -25,67 +25,99 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int HOP = 11;
   /** RegularExpression Id. */
-  int COLON = 12;
+  int LEFT = 12;
   /** RegularExpression Id. */
-  int IF = 13;
+  int AROUND = 13;
   /** RegularExpression Id. */
-  int LOOP = 14;
+  int FRONT = 14;
   /** RegularExpression Id. */
-  int REPEAT = 15;
+  int BACK = 15;
   /** RegularExpression Id. */
-  int DEFUN = 16;
+  int UP = 16;
   /** RegularExpression Id. */
-  int DIM = 17;
+  int DOWN = 17;
   /** RegularExpression Id. */
-  int MYXPOS = 18;
+  int DEFVAR = 18;
   /** RegularExpression Id. */
-  int MYYPOS = 19;
+  int SKIPP = 19;
   /** RegularExpression Id. */
-  int MYCHIPS = 20;
+  int TURN = 20;
   /** RegularExpression Id. */
-  int MYBALLONS = 21;
+  int FACE = 21;
   /** RegularExpression Id. */
-  int BALLONSHERE = 22;
+  int MOVEDIR = 22;
   /** RegularExpression Id. */
-  int CHIPSHERE = 23;
+  int RUNDIRS = 23;
   /** RegularExpression Id. */
-  int SPACES = 24;
+  int MOVEFACE = 24;
   /** RegularExpression Id. */
-  int NULL = 25;
+  int LP = 25;
   /** RegularExpression Id. */
-  int BALLOONS = 26;
+  int RP = 26;
   /** RegularExpression Id. */
-  int CHIPS = 27;
+  int COLON = 27;
   /** RegularExpression Id. */
-  int NORTH = 28;
+  int IF = 28;
   /** RegularExpression Id. */
-  int SOUTH = 29;
+  int LOOP = 29;
   /** RegularExpression Id. */
-  int EAST = 30;
+  int REPEAT = 30;
   /** RegularExpression Id. */
-  int WEST = 31;
+  int DEFUN = 31;
   /** RegularExpression Id. */
-  int LEFT = 32;
+  int BALLOONS = 32;
   /** RegularExpression Id. */
-  int AROUND = 33;
+  int CHIPS = 33;
   /** RegularExpression Id. */
-  int FRONT = 34;
+  int FACING = 34;
   /** RegularExpression Id. */
-  int BACK = 35;
+  int BLOCKED = 35;
   /** RegularExpression Id. */
-  int UP = 36;
+  int CANPUT = 36;
   /** RegularExpression Id. */
-  int DOWN = 37;
+  int CANPICK = 37;
   /** RegularExpression Id. */
-  int NUM = 38;
+  int CANMOVE = 38;
   /** RegularExpression Id. */
-  int DIGIT = 39;
+  int ISZERO = 39;
   /** RegularExpression Id. */
-  int DIGITO = 40;
+  int NOT = 40;
   /** RegularExpression Id. */
-  int LETRA = 41;
+  int DIM = 41;
   /** RegularExpression Id. */
-  int PALABRA = 42;
+  int MYXPOS = 42;
+  /** RegularExpression Id. */
+  int MYYPOS = 43;
+  /** RegularExpression Id. */
+  int MYCHIPS = 44;
+  /** RegularExpression Id. */
+  int MYBALLONS = 45;
+  /** RegularExpression Id. */
+  int BALLONSHERE = 46;
+  /** RegularExpression Id. */
+  int CHIPSHERE = 47;
+  /** RegularExpression Id. */
+  int SPACES = 48;
+  /** RegularExpression Id. */
+  int NULL = 49;
+  /** RegularExpression Id. */
+  int NORTH = 50;
+  /** RegularExpression Id. */
+  int SOUTH = 51;
+  /** RegularExpression Id. */
+  int EAST = 52;
+  /** RegularExpression Id. */
+  int WEST = 53;
+  /** RegularExpression Id. */
+  int NUM = 54;
+  /** RegularExpression Id. */
+  int DIGIT = 55;
+  /** RegularExpression Id. */
+  int DIGITO = 56;
+  /** RegularExpression Id. */
+  int LETRA = 57;
+  /** RegularExpression Id. */
+  int PALABRA = 58;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -97,18 +129,42 @@ public interface RobotConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
-    "\"Mov\"",
+    "<MOV>",
     "\"RIGHT\"",
     "\"Put\"",
     "\"Pick\"",
     "\"Pop\"",
     "\"GO\"",
     "\"HOP\"",
+    "\"left\"",
+    "\"around\"",
+    "\"front\"",
+    "\"back\"",
+    "\"up\"",
+    "\"down\"",
+    "\"defvar\"",
+    "\"skip\"",
+    "\"turn\"",
+    "\"face\"",
+    "\"move-dir\"",
+    "\"run-dirs\"",
+    "\"move-face\"",
+    "\"(\"",
+    "\")\"",
     "\":\"",
     "\"if\"",
     "\"loop\"",
-    "\"repead\"",
+    "\"repeat\"",
     "\"defun\"",
+    "\"BALLOONS\"",
+    "\"CHIPS\"",
+    "\"facing?\"",
+    "\"blocked?\"",
+    "\"can-put?\"",
+    "\"can-pick?\"",
+    "\"can-move?\"",
+    "\"iszero?\"",
+    "\"not\"",
     "\"dim\"",
     "\"myxpos\"",
     "\"myypos\"",
@@ -118,25 +174,15 @@ public interface RobotConstants {
     "\"chipsHere\"",
     "\"spaces\"",
     "\"null\"",
-    "\"BALLOONS\"",
-    "\"CHIPS\"",
     "\"north\"",
     "\"south\"",
     "\"east\"",
     "\"west\"",
-    "\"left\"",
-    "\"around\"",
-    "\"front\"",
-    "\"back\"",
-    "\"up\"",
-    "\"down\"",
     "<NUM>",
     "<DIGIT>",
     "<DIGITO>",
     "<LETRA>",
     "<PALABRA>",
-    "\"(\"",
-    "\")\"",
     "\",\"",
     "\";\"",
   };
