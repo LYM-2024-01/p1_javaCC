@@ -13,7 +13,7 @@ Modificado por Silvia Takahashi
 options 
 {
   
-	LOOKAHEAD=1; 
+	LOOKAHEAD=2; 
 	IGNORE_CASE=true;
 	STATIC = false;
 	
@@ -31,29 +31,44 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.awt.Point;
 
 @SuppressWarnings("serial")
 public class Robot 
 {
-
-
 	private RobotWorldDec world;
 
-
-	private static int dim = 0;
+	private static int dim = 0; //
 	private static int myXPos = 0;
 	private static int myYPos = 0;
-	private static int myChips = 0;
-	private static int myBallons = 0;
+	private static int myChips = 0;//
+	private static int myBallons = 0; //
 	private int myChipsHere = 0;
 	private int myBallonsHere = 0;
 	private int spaces = 0;
 
+	public static final int NORTH = 0;
+	public static final int SOUTH = 1;
+	public static final int EAST = 2;
+	public static final int WEST = 3;
 
+	private static String leftD = "left";
+	private static String frontD = "front";
+	private static String backD = "back";
+	private static String rightD = "right";
+	private static String aroundD = "around";
+	
+	private static String northO = "north";
+	private static String southO = "south";
+	private static String westO = "west";
+	private static String eastO = "east";
+	
+  	
 	private HashMap < String, Integer > funciones = new HashMap < String, Integer > ();
-  	private HashMap < String, String > variables = new HashMap < String, String > ();
+  	private HashMap < String, Integer > variables = new HashMap < String, Integer > ();
   	private HashMap < String, Integer > variables_temporales = new HashMap < String, Integer > ();
   	private HashSet < String> condiciones = new HashSet < String> ();
 	
@@ -61,6 +76,8 @@ public class Robot
 		world = (RobotWorldDec) w;	
 	}
 
+	//dim = world.getN();
+	
 	String salida=new String();
 }
 PARSER_END(Robot)
@@ -156,39 +173,29 @@ TOKEN: //O
 
 TOKEN :
 {
-		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >     
-}
-
-TOKEN :
-{
-  	<#DIGITO: ["0"-"9"] >
+	<#DIGIT: ["0"-"9"] >
 	| < #LETRA : [ "a" - "z" , "A" - "Z"] >
+	
+	|	< NUMERO_ENTERO : (<DIGIT>)+ >
+	| < NUMERO_DECIMAL : (< DIGIT >)+ "." (< DIGIT >)+ >
 
-	| < PALABRA : (< LETRA > | "_") (< LETRA >| < DIGITO > | "_")* >
+	| < PALABRA : (< LETRA > | "_") (< LETRA >| < DIGIT > | "_")* >
 }
+
+
 
 
 
 	//boolean command(uniandes.lym.robot.view.Console sistema) :
 	boolean command(Console sistema):
-	{	
-		
+	{		
 		int x,y;
 		salida=new String();	
 	}
-
-	
 	{
 		(		  (
-		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
-		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <PUT> "("  put() ")"					  			
-		|  <PICK> "(" get()  ")"	
-	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
-		) ";" 
+		   instruccion()
+		) 
 
 		{
 		    try {
@@ -204,23 +211,87 @@ TOKEN :
     	| <EOF> {return false;} 
 	}
 
+
+
+	void instruccion(): { }
+		{
+		  subcondicion()
+		| definirVariable()
+		| comandos()
+		| ifRobot()
+	
+		}
+
+
+
+	void definirVariable(): 
+	{
+	  String var1;
+	  Integer valor;
+	}
+	{
+		< LP >
+	  (
+	    	< DEFVAR >
+	    	< PALABRA > { var1 = token.image; if (funciones.containsKey(var1))throw new Error("La funcion ya se declaró como funcion");}
+	    	(
+			    < NUMERO_ENTERO > { valor = Integer.parseInt(token.image); }
+			)
+			{ variables.put(var1, valor); }
+	  )
+	  < RP >
+	}
+
+
+	void ifRobot():
+	{ boolean resultado; }
+	{
+	  < LP >
+	    	< IF > resultado = subcondicion()
+	    	< LP >
+	    	{ if (resultado) {
+		    	  while (!token.image.equals(")")) {
+	                token = getNextToken();
+	              }
+              }
+	    	} < LP >(comandos()) <RP>  //(comandos())+
+	  < RP >
+	}
+
+
+	void loopRobot():
+	{ boolean resultado; }
+	{
+	  < LP >
+	    	< LOOP > resultado = subcondicion() (comandos())+ 
+	  < RP >
+	  
+
+	}
+
+
+	void block(): { }
+	{ comandos() (comandos())+ }
+
+
 	void put() :
 	{
 		int f=1;	
 	}
 	{
-		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
+		( <CHIPS>   (f=num() | f = valor_variable() | f = constante()) {world.putChips(f); salida = "Command:  Put Chips"; })
+		|  	  ( <BALLOONS>   ( f=num() | f = valor_variable() | f = constante()) {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
 
 	}
+
 
 	void get() :
 	{
 		int f=1;	
 	}
 	{
-		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
+		( <CHIPS>  (f=num() | f = valor_variable() | f = constante())  {world.pickChips(f);salida = "Command:  Pick chips";})
+		|  	  ( <BALLOONS>  (f=num() | f = valor_variable() | f = constante()) {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
 
 	}
 
@@ -238,7 +309,7 @@ TOKEN :
 		int total=1;
 	}
 	{
-		<NUM>
+		< NUMERO_ENTERO >
 		{
 			try 
 			{
@@ -258,16 +329,310 @@ TOKEN :
 		int respuesta = -1;
 	}
 	{
-	  (	    	( < DIM > { respuesta = this.dim; } )
-		| 	( < MYXPOS > { respuesta = this.myXPos; } )
-		| 	( < MYYPOS > { respuesta = this.myYPos; } )
-		| 	( < MYCHIPS  > { respuesta = this.myChips; } )
-		| 	( < MYBALLONS > { respuesta = this.myBallons; } )
-		| 	( < BALLONSHERE > { respuesta = this.myBallons; } )
-		| 	( < CHIPSHERE >{ respuesta = this.myChipsHere; } )
-		|   ( < SPACES > { respuesta = this.spaces; } )
+	  (	    	( < DIM > { respuesta = world.getN(); } )
+		| 	( < MYXPOS > { respuesta = (int)world.getPosition().getX(); } )
+		| 	( < MYYPOS > { respuesta = (int)world.getPosition().getY(); } )
+		| 	( < MYCHIPS  > { respuesta = world.getMyChips(); } )
+		| 	( < MYBALLONS > { respuesta = world.getMyBalloons(); } )
+		| 	( < BALLONSHERE > { respuesta = world.countBalloons(); } )
+		| 	( < CHIPSHERE >{ respuesta = world.chipsToPick(); } )
+		|   ( < SPACES > { respuesta = world.freeSpacesForChips(); } )
 		)
 | 		{ return respuesta;}
 	}
 	
+
+String direccionn(): { String respuesta = ""; }
+{
+  < COLON >
+  (
+    ( < LEFT > { respuesta = this.leftD;}
+    | < FRONT > { respuesta = this.frontD;}
+    | < BACK > { respuesta = this.backD;}
+    | < RIGHT > { respuesta = this.rightD;}
+    | < AROUND > { respuesta = this.aroundD;}
+    )
+  )
+    { return respuesta; }
+}
+
+String orientacion(): { String respuesta = ""; System.out.println("Cosas");}
+{
+  < COLON >
+  (	< NORTH > { respuesta = this.northO;}
+  	| < SOUTH > { respuesta = this.southO;}
+  	| < WEST > { respuesta = this.westO;}
+  	| < EAST > { respuesta = this.eastO;}
+  )
+  {return respuesta;}
+}
+
+String objeto(): {}
+{
+  < COLON >
+	( < BALLOONS > { return "ballons"; }
+	  | < CHIPS > { return "chips"; }
+  	) 
+}
+
+Integer valor_variable(): { String name = ""; }
+{
+  < COLON >
+  < PALABRA > { name = token.image; return variables.get(name);}
+}
+
+
+void comandos():
+	{
+	int x,y;
+	String texto1, texto2;
+	salida=new String();
+	int orientacion_actual = world.getFacing();
+	ArrayList<String> direcciones = new ArrayList< String>();
+	}
+	{
+	  (	    < LP >
+	  (
+	    declarar_variable()
+	    
+		| ( <MOV>  ( x=num() | x = valor_variable() | x = constante() )  {world.moveForward(x,false);salida = "Command: Moveforward ";} )
+	
+		| ( < SKIPP > ( x=num() | x = valor_variable() | x = constante() ) {world.moveForward(x,true);salida = "Command: MoveSkip ";} )
+	
+		| ( < TURN >  texto1 = direccionn() {if (texto1.equals("right")) { world.turnRight(); salida = "Command: Turnright"; }
+										else if (texto1.equals("left")) { world.turnRight(); world.turnRight(); world.turnRight(); salida = "Command: TurnLeft"; }
+										else if (texto1.equals("around")) { world.turnRight(); world.turnRight(); salida = "Command: TurnAround"; }
+										else { throw new Error("Direccion invalida: no es \":right\", \":left\", \":around\""); }
+								} )
+			
+		| ( < FACE > texto1 = orientacion() {if (texto1.equals("north")) {
+		  										if(orientacion_actual == SOUTH) { world.turnRight(); world.turnRight(); }
+		  										else if(orientacion_actual == WEST) { world.turnRight(); }
+		  										else if(orientacion_actual == EAST) { world.turnRight(); world.turnRight(); world.turnRight(); }
+		  										
+		  									} else if (texto1.equals("east")) {
+		  										if(orientacion_actual == WEST) { world.turnRight(); world.turnRight(); }
+		  										else if(orientacion_actual == NORTH) { world.turnRight(); }
+		  										else if(orientacion_actual == SOUTH) { world.turnRight(); world.turnRight(); world.turnRight(); }
+		  										
+		  									} else if (texto1.equals("south")) {
+		  										if(orientacion_actual == NORTH) { world.turnRight(); world.turnRight(); }
+		  										else if(orientacion_actual == EAST) { world.turnRight(); }
+		  										else if(orientacion_actual == WEST) { world.turnRight(); world.turnRight(); world.turnRight(); }
+		  										
+		  									} else if (texto1.equals("west")) {
+		  										if(orientacion_actual == EAST) { world.turnRight(); world.turnRight(); }
+		  										else if(orientacion_actual == SOUTH) { world.turnRight(); }
+		  										else if(orientacion_actual == NORTH) { world.turnRight(); world.turnRight(); world.turnRight(); }
+		  									}
+		  								})
+		
+			|  < PUT >  put()
+							  			
+			|  < PICK >  get()
+	
+			| ( < MOVEDIR > ( x=num() | x = valor_variable() | x = constante() )  texto1 = direccionn() {
+					 if (texto1.equals("right")) {
+						if(orientacion_actual == NORTH) { for(int i=0; i<x; i++) { world.right(); } }
+						else if(orientacion_actual == SOUTH) { for(int i=0; i<x; i++) { world.left(); } }
+						else if(orientacion_actual == WEST) { for(int i=0; i<x; i++) { world.up(); } }
+						else if(orientacion_actual == EAST) { for(int i=0; i<x; i++) { world.down(); } }
+						salida = "Command: MovDir hacia derecha " + x + "pasos" ;
+							
+					} else if (texto1.equals("left")) {
+						if(orientacion_actual == NORTH) { for(int i=0; i<x; i++) { world.left(); } } 
+						else if(orientacion_actual == SOUTH) { for(int i=0; i<x; i++) { world.right(); } }
+						else if(orientacion_actual == WEST) { for(int i=0; i<x; i++) { world.down(); } }
+						else if(orientacion_actual == EAST) { for(int i=0; i<x; i++) { world.up(); } }
+						salida = "Command: MovDir hacia izquierda " + x + "pasos" ;
+						
+					} else if (texto1.equals("front")) {
+						if(orientacion_actual == NORTH) { for(int i=0; i<x; i++) { world.up(); } } 
+						else if(orientacion_actual == SOUTH) { for(int i=0; i<x; i++) { world.down(); } }
+						else if(orientacion_actual == WEST) { for(int i=0; i<x; i++) { world.left(); } }
+						else if(orientacion_actual == EAST) { for(int i=0; i<x; i++) { world.right(); } }
+						salida = "Command: MovDir hacia en frente " + x + "pasos" ;
+						
+					} else if (texto1.equals("back")) {
+						if(orientacion_actual == NORTH) { for(int i=0; i<x; i++) { world.down(); } }
+						else if(orientacion_actual == SOUTH) { for(int i=0; i<x; i++) { world.up(); } }
+						else if(orientacion_actual == WEST) { for(int i=0; i<x; i++) { world.right(); } }
+						else if(orientacion_actual == EAST) { for(int i=0; i<x; i++) { world.left(); }  }
+						salida = "Command: MovDir hacia atras " + x + "pasos" ;
+					}
+					else { throw new Error("Direccion invalida: no es \":right\", \":left\", \":front\", \":back\""); }
+								})
+	
+			| < RUNDIRS > direcciones = varias_direcciones()
+				{ for(int j=0; j<direcciones.size(); j++) { 
+				
+					if (direcciones.get(j).equals("right")) {
+						if(orientacion_actual == NORTH) { world.right(); }
+						else if(orientacion_actual == SOUTH) { world.left(); }
+						else if(orientacion_actual == WEST) { world.up(); }
+						else if(orientacion_actual == EAST) { world.down(); }
+						salida = "Command: Mover hacia la derecha" ;
+							
+					} else if (direcciones.get(j).equals("left")) {
+						if(orientacion_actual == NORTH) { world.left(); } 
+						else if(orientacion_actual == SOUTH) { world.right(); }
+						else if(orientacion_actual == WEST) { world.down(); }
+						else if(orientacion_actual == EAST) { world.up(); }
+						salida = "Command: Mover hacia la izquierda" ;
+						
+					} else if (direcciones.get(j).equals("front")) {
+						if(orientacion_actual == NORTH) { world.up(); } 
+						else if(orientacion_actual == SOUTH) { world.down(); }
+						else if(orientacion_actual == WEST) { world.left(); }
+						else if(orientacion_actual == EAST) { world.right(); }
+						salida = "Command: Mover hacia el frente " ;
+						
+					} else if (direcciones.get(j).equals("back")) {
+						if(orientacion_actual == NORTH) { world.down(); }
+						else if(orientacion_actual == SOUTH) { world.up(); }
+						else if(orientacion_actual == WEST) { world.right(); }
+						else if(orientacion_actual == EAST) { world.left(); }
+						salida = "Command: Mover hacia atras" ;
+					}
+					else { throw new Error("Direccion invalida: no es \":right\", \":left\", \":front\", \":back\""); }
+				  }
+				}
+	
+			| < MOVEFACE > ( x=num() | x = valor_variable() | x = constante() ) texto1 = orientacion()
+				{
+				  if (texto1.equals("north")) {
+						if(orientacion_actual == SOUTH) { world.turnRight(); world.turnRight(); }
+						else if(orientacion_actual == WEST) { world.turnRight(); }
+						else if(orientacion_actual == EAST) { world.turnRight(); world.turnRight(); world.turnRight(); }
+						for(int i=0; i<x; i++) { world.up(); }
+						
+					} else if (texto1.equals("east")) {
+						if(orientacion_actual == WEST) { world.turnRight(); world.turnRight(); }
+						else if(orientacion_actual == NORTH) { world.turnRight(); }
+						else if(orientacion_actual == SOUTH) { world.turnRight(); world.turnRight(); world.turnRight(); }
+						for(int i=0; i<x; i++) { world.right(); }
+						
+					} else if (texto1.equals("south")) {
+						if(orientacion_actual == NORTH) { world.turnRight(); world.turnRight(); }
+						else if(orientacion_actual == EAST) { world.turnRight(); }
+						else if(orientacion_actual == WEST) { world.turnRight(); world.turnRight(); world.turnRight(); }
+						for(int i=0; i<x; i++) { world.down(); }
+						
+					} else if (texto1.equals("west")) {
+						if(orientacion_actual == EAST) { world.turnRight(); world.turnRight(); }
+						else if(orientacion_actual == SOUTH) { world.turnRight(); }
+						else if(orientacion_actual == NORTH) { world.turnRight(); world.turnRight(); world.turnRight(); }
+						for(int i=0; i<x; i++) { world.left(); }
+					}
+				}
+	
+			| < NULL >	
+	  )
+	  < RP > )
+}
+
+
+ArrayList<String> varias_direcciones():
+{
+  ArrayList<String> directi = new ArrayList< String>();
+  String directionName = "";
+}
+{
+  (directionName = direccionn() { directi.add(directionName);})+ { return directi; } 
+}
+
+
+	  
+boolean subcondicion():
+{
+	String texto1;
+	int face_actual, x;
+	boolean respuesta;
+	System.out.println("Abrazos1");
+}
+{
+  < LP >
+  (
+    	( < FACING > texto1 = orientacion()
+    		{ if (texto1.equals("north")) { face_actual = NORTH; }
+    			else if (texto1.equals("south")) { face_actual = SOUTH; }
+    			else if (texto1.equals("west")) { face_actual = WEST; }
+    			else if (texto1.equals("east")) { face_actual = EAST; }
+    			else { throw new Error("Orientacion invalida"); }
+    			return face_actual == world.getFacing();} )
+    			
+	  | (< BLOCKED > { return world.isBlocked(world.getPosition());})
+	  
+	  | (< CANPUT > texto1 = objeto() ( x=num() | x = valor_variable() | x = constante() )
+	  		{
+				if (texto1.equals("ballons")) { return true;}
+				else if (texto1.equals("chips"))
+				{ respuesta = !(world.blockedInRange((int)world.getPosition().getX(), (int)world.getPosition().getY(), (int)world.getPosition().getY()+x, 1));
+					return respuesta; }
+	  		})
+	  
+	  | (< CANPICK > texto1 = objeto() ( x=num() | x = valor_variable() | x = constante() )
+	  		{
+				if (texto1.equals("ballons")) { return world.chipExists();}
+				else if (texto1.equals("chips")) { return world.containsBallons(); }
+	  		})
+	  
+	  | (< CANMOVE > texto1 = orientacion()
+	  		{	System.out.println("Abrazos2");
+	  		  respuesta = true;
+	  		  int posXc = (int)world.getPosition().getX();
+	  		  int posYc = (int)world.getPosition().getY();
+	  		  if (texto1.equals("north")) {
+					if (posYc <= 1 || world.isBlocked(new Point(posXc,posYc-1)) ) { respuesta = false; }
+					
+				} else if (texto1.equals("east")) {
+					if (posXc >= world.getN() || world.isBlocked(new Point(posXc+1,posYc)) ) { respuesta = false;}
+										
+				} else if (texto1.equals("south")) {
+					if (posYc >= world.getN() || world.isBlocked(new Point(posXc,posYc+1)) ) { respuesta = false;}
+					
+				} else if (texto1.equals("west")) {
+					if (posXc <= 1 || world.isBlocked(new Point(posXc-1,posYc)) ) { respuesta = false ;}
+				} 
+	  		  })
+	  		  
+	  | ( < ISZERO > ( x=num() | x = valor_variable() | x = constante() ) { return x==0;} )
+	  
+	  | < NOT > respuesta = subcondicion() { return !respuesta; }
+  )
+  < RP >
+}
+
+
+void subestructuras(): { }
+{
+  < LP >
+  (
+    < IF > subcondicion() comandos() comandos()
+  | < LOOP > subcondicion() comandos()
+  | < REPEAT > (< NUMERO_ENTERO > | valor_variable() | constante()) comandos()
+  
+  )
+  < RP >
+}
+
+
+void declarar_variable():
+{
+  String var1;
+  Integer valor;
+}
+{
+  "="
+  < PALABRA > {  var1 = token.image; if (funciones.containsKey(var1))throw new Error("La funcion ya se declaró como funcion");}
+
+  (
+    < NUMERO_ENTERO > { valor = Integer.parseInt(token.image); }
+  )
+  { variables.put(var1, valor);}
+}
+
+
+
+
 

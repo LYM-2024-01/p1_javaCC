@@ -109,13 +109,13 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int WEST = 53;
   /** RegularExpression Id. */
-  int NUM = 54;
+  int DIGIT = 54;
   /** RegularExpression Id. */
-  int DIGIT = 55;
+  int LETRA = 55;
   /** RegularExpression Id. */
-  int DIGITO = 56;
+  int NUMERO_ENTERO = 56;
   /** RegularExpression Id. */
-  int LETRA = 57;
+  int NUMERO_DECIMAL = 57;
   /** RegularExpression Id. */
   int PALABRA = 58;
 
@@ -178,13 +178,12 @@ public interface RobotConstants {
     "\"south\"",
     "\"east\"",
     "\"west\"",
-    "<NUM>",
     "<DIGIT>",
-    "<DIGITO>",
     "<LETRA>",
+    "<NUMERO_ENTERO>",
+    "<NUMERO_DECIMAL>",
     "<PALABRA>",
-    "\",\"",
-    "\";\"",
+    "\"=\"",
   };
 
 }
